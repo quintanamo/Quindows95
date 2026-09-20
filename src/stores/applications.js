@@ -24,6 +24,7 @@ export const useApplicationStore = defineStore('applications', {
         canResize: canResize,
         content: content,
         isMinimized: false,
+        windowOffset: ((this.count - 1) % 8) * 2,
         zIndex: this.nextZIndex++,
       })
       this.activeIndex = this.count

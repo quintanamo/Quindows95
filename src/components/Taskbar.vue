@@ -73,7 +73,6 @@ onUnmounted(() => {
   background-color: $color-gray;
   width: 100%;
   height: 4rem;
-  border-top: 1px solid $color-white;
   box-sizing: border-box;
   padding-top: 0.3rem;
   padding-left: 0.4rem;
@@ -85,6 +84,7 @@ onUnmounted(() => {
   user-select: none;
   border-top: 0.1rem solid $color-white;
   z-index: 10000;
+  color: $color-black;
 
   &__start-btn {
     height: 3rem;
@@ -100,7 +100,8 @@ onUnmounted(() => {
     border-left: 1px solid $color-gray-dark;
     border-right: 1px solid $color-gray-dark;
     border-bottom: 1px solid $color-gray-dark;
-    box-shadow: 1px 1px 0px #000000;
+    box-shadow: 1px 1px 0px $color-black;
+    color: $color-black;
 
     &--active {
       border-top: 1px solid $color-gray-dark;

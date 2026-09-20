@@ -3,6 +3,7 @@ import BookIcon from '../assets/images/book.png'
 import ProgramsIcon from '../assets/images/programs.png'
 import ShutdownIcon from '../assets/images/shutdown.png'
 import SnakeIcon from '../assets/images/snake.png'
+import PokerIcon from '../assets/images/poker.png'
 import { useApplicationStore } from '@/stores/applications'
 
 const props = defineProps({
@@ -14,6 +15,11 @@ const applications = useApplicationStore()
 
 const openApplication = (title, path) => {
   applications.pushApplication(title, `website:${path}`)
+  emit('close')
+}
+
+const openDosApplication = (title, filename) => {
+  applications.pushApplication(title, `dos:${filename}`)
   emit('close')
 }
 </script>
@@ -38,6 +44,14 @@ const openApplication = (title, path) => {
           >
             <img :src="SnakeIcon" alt="" />
             <span>Checkbox Snake</span>
+          </button>
+          <button
+            class="start-menu__flyout-item"
+            type="button"
+            @click="openDosApplication('Video Poker', 'VPOKER.jsdos')"
+          >
+            <img :src="PokerIcon" alt="" />
+            <span>Video Poker</span>
           </button>
         </div>
       </div>
