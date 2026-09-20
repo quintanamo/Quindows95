@@ -18,9 +18,6 @@ const getCurrentTime = () => {
   data.time = `${hours > 12 ? hours - 12 : hours}:${minutes < 10 ? '0' + minutes : minutes} ${suffix}`
 }
 
-applications.pushApplication('title')
-applications.pushApplication('title 2')
-
 onMounted(() => {
   getCurrentTime()
   setInterval(getCurrentTime, 1000 * 30)
@@ -64,6 +61,7 @@ onMounted(() => {
   cursor: default;
   user-select: none;
   border-top: 0.1rem solid $color-white;
+  z-index: 10000;
 
   &__start-btn {
     height: 3rem;
