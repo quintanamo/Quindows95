@@ -1,9 +1,11 @@
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useApplicationStore } from '@/stores/applications'
 import TaskbarButton from './TaskbarButton.vue'
+import StartMenu from './StartMenu.vue'
 
 const applications = useApplicationStore()
+const isStartMenuOpen = ref(false)
 
 const data = reactive({
   time: '12:00 PM',
@@ -18,15 +20,36 @@ const getCurrentTime = () => {
   data.time = `${hours > 12 ? hours - 12 : hours}:${minutes < 10 ? '0' + minutes : minutes} ${suffix}`
 }
 
+const handleDocumentClick = event => {
+  if (
+    event.target.closest('.start-menu') ||
+    event.target.closest('.taskbar__start-btn')
+  ) {
+    return
+  }
+
+  isStartMenuOpen.value = false
+}
+
 onMounted(() => {
   getCurrentTime()
   setInterval(getCurrentTime, 1000 * 30)
+  document.addEventListener('click', handleDocumentClick)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleDocumentClick)
 })
 </script>
 
 <template>
   <footer class="taskbar">
-    <button class="taskbar__start-btn">
+    <StartMenu :visible="isStartMenuOpen" @close="isStartMenuOpen = false" />
+    <button
+      class="taskbar__start-btn"
+      :class="{ 'taskbar__start-btn--active': isStartMenuOpen }"
+      @click.stop="isStartMenuOpen = !isStartMenuOpen"
+    >
       <img
         src="../assets/images/quindows-logo.png"
         alt="Quindows 95 Logo"
@@ -78,6 +101,15 @@ onMounted(() => {
     border-right: 1px solid $color-gray-dark;
     border-bottom: 1px solid $color-gray-dark;
     box-shadow: 1px 1px 0px #000000;
+
+    &--active {
+      border-top: 1px solid $color-gray-dark;
+      border-left: 1px solid $color-gray-dark;
+      border-right: 1px solid $color-white;
+      border-bottom: 1px solid $color-white;
+      box-shadow: -1px -1px 0px $color-black;
+      background-color: $color-gray-light;
+    }
   }
 
   &__start-icon {

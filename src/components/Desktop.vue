@@ -5,8 +5,8 @@ import { useApplicationStore } from '@/stores/applications'
 import ApplicationWindow from './ApplicationWindow.vue'
 const applications = useApplicationStore()
 
-const openApplication = (appName, canResize = true) => {
-  applications.pushApplication(appName, canResize)
+const openApplication = (title, content, canResize = true) => {
+  applications.pushApplication(title, content, canResize)
 }
 
 const handleDesktopClick = event => {
@@ -26,7 +26,7 @@ const handleDesktopClick = event => {
         :id="application.id"
         :title="application.title"
         :can-resize="application.canResize"
-        :content="'website:https://quintinherb.net'"
+        :content="application.content"
       />
     </template>
     <ul class="desktop__icons">
@@ -34,7 +34,9 @@ const handleDesktopClick = event => {
         <DesktopIcon
           :icon-src="InternetIcon"
           title="My Site"
-          @dblclick="openApplication('My Site')"
+          @dblclick="
+            openApplication('My Site', 'website:https://quintinherb.net')
+          "
         />
       </li>
     </ul>

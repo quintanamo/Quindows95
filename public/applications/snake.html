@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Snake</title>
+
+    <style>
+        body, html {
+            background-color: #000000;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+
+        #game {
+            display: block;
+            margin-top: 50px;
+        }
+
+        #game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            padding: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        #game-over h1 {
+            margin: 0;
+        }
+
+        #game-over h3 {
+            font-weight: normal;
+            color: #111111;
+            margin: 0;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #f2f2f2; font-size: 60px; margin-bottom: 0;">Snake Game!</h1>
+    <h2 style="color: #f2f2f2; font-weight: normal;"><i>But I made it with checkboxes</i></h2>
+
+    <button onclick="playGame(); this.style.display = 'none'">Play</button>
+
+    <div id="game">
+
+    </div>
+
+    <div id="game-over">
+        <h1>Game Over!</h1>
+        <h3 id="score"></h3>
+        <button onclick="playGame();" style="margin-top: 10px;">Restart</button>
+    </div>
+
+    <script type="text/javascript">
+        const GAME_SIZE = 10;
+        var tiles;
+        var xPos;
+        var yPos;
+        var snakeBody = [];
+        var movementDirection;
+        var score = 0;
+        var intervalID;
+        var game = document.getElementById("game");
+
+        var isFruitActive = true;
+
+        document.onkeydown = function (event) {
+            switch (event.keyCode) {
+                // left
+                case 37:
+                    if (movementDirection != 3) movementDirection = 1;
+                    break;
+                // up
+                case 38:
+                    if (movementDirection != 4) movementDirection = 2;
+                    break;
+                // right
+                case 39:
+                    if (movementDirection != 1) movementDirection = 3;
+                    break;
+                // down
+                case 40:
+                    if (movementDirection != 2) movementDirection = 4;
+                    break;
+            }
+        };
+
+        function loadGame() {
+            tiles = [[], [], [], [], [], [], [], [], [], []];
+            xPos = 2;
+            yPos = 2;
+            movementDirection = 3;
+            game.innerHTML = "";
+
+            for (let i = 0; i < GAME_SIZE; i++) {
+                let row = document.createElement("div");
+                row.className = "row";
+                for (let j = 0; j < GAME_SIZE; j++) {
+                    tiles[i][j] = document.createElement('input');
+                    tiles[i][j].type = "checkbox";
+                    row.appendChild(tiles[i][j]);
+                }
+                game.appendChild(row);
+            }
+            snakeBody = [tiles[yPos][xPos], tiles[yPos][xPos-1], tiles[yPos][xPos-2]];
+            for (piece of snakeBody) {
+                piece.disabled = true;
+            }
+            generateFruit();
+        }
+
+        function generateFruit() {
+            var fruitX = Math.floor(Math.random() * (GAME_SIZE - 1));
+            var fruitY = Math.floor(Math.random() * (GAME_SIZE - 1));
+            if (tiles[fruitY][fruitX].disabled == false) {
+                tiles[fruitY][fruitX].checked = true;
+            } else {
+                generateFruit();
+            }
+        }
+
+        function showGameOver(score) {
+            document.getElementById("game-over").style.display = "block";
+            document.getElementById("score").textContent = "Score: " + score;
+        }
+
+        function runGame() {
+            switch (movementDirection) {
+                case 1:
+                    xPos--;
+                    break;
+                case 2:
+                    yPos--;
+                    break;
+                case 3:
+                    xPos++;
+                    break;
+                case 4:
+                    yPos++;
+                    break;
+            }
+
+            if (!isFruitActive) {
+                generateFruit();
+                isFruitActive = true;
+            }
+            
+            if (xPos >= 0 && xPos < GAME_SIZE && yPos >= 0 && yPos < GAME_SIZE && tiles[yPos][xPos].disabled == false) {
+                let head = tiles[yPos][xPos];
+                head.disabled = true;
+                snakeBody.unshift(head);
+                if (head.checked != true) {
+                    let tail = snakeBody.pop();
+                    tail.disabled = false;
+                } else {
+                    isFruitActive = false;
+                    head.checked = false;
+                    score++;
+                }
+            } else {
+                showGameOver(score);
+                clearInterval(intervalID);
+            }
+        }
+
+        function playGame() {
+            document.getElementById("game-over").style.display = "none";
+            loadGame();
+            intervalID = setInterval(runGame, 300);
+        }
+        
+    </script>
+</body>
+</html>

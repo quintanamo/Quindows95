@@ -12,12 +12,17 @@ export const useApplicationStore = defineStore('applications', {
     getApplications: state => state.applications,
   },
   actions: {
-    pushApplication(title, canResize = true) {
+    pushApplication(
+      title,
+      content = 'website:https://quintinherb.net',
+      canResize = true,
+    ) {
       this.count++
       this.applications.push({
         id: this.count,
         title: title,
         canResize: canResize,
+        content: content,
         isMinimized: false,
         zIndex: this.nextZIndex++,
       })
