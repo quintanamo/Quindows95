@@ -65,6 +65,12 @@ const separatorIndex = props.content.indexOf(':')
 const contentType = props.content.slice(0, separatorIndex)
 const contentValue = props.content.slice(separatorIndex + 1)
 
+const resolvePublicUrl = value => {
+  if (/^https?:\/\//.test(value)) return value
+
+  return `${import.meta.env.BASE_URL}${value.replace(/^\/+/, '')}`
+}
+
 const applications = useApplicationStore()
 const application = computed(() =>
   applications.applications.find(app => app.id === props.id),
@@ -173,10 +179,11 @@ const startDosApplication = async () => {
 
   try {
     await nextTick()
-    const dosApplicationPath =
+    const dosApplicationPath = resolvePublicUrl(
       contentValue.startsWith('/') || contentValue.startsWith('http')
         ? contentValue
-        : `/applications/${contentValue}`
+        : `applications/${contentValue}`,
+    )
     const shadowRoot = dosContainer.value.attachShadow({ mode: 'open' })
     const style = document.createElement('style')
     const playerElement = document.createElement('div')
@@ -277,7 +284,7 @@ onUnmounted(() => {
         ref="embeddedContent"
         :id="`${props.id}-object`"
         class="application-window__object"
-        :src="contentValue"
+        :src="resolvePublicUrl(contentValue)"
         tabindex="0"
         :title="title"
         :style="{ pointerEvents: isActive ? 'auto' : 'none' }"

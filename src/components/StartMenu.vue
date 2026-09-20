@@ -39,7 +39,7 @@ const openDosApplication = (title, filename) => {
             class="start-menu__flyout-item"
             type="button"
             @click="
-              openApplication('Checkbox Snake', '/applications/snake.html')
+              openApplication('Checkbox Snake', 'applications/snake.html')
             "
           >
             <img :src="SnakeIcon" alt="" />
@@ -58,7 +58,7 @@ const openDosApplication = (title, filename) => {
       <button
         class="start-menu__item"
         type="button"
-        @click="openApplication('About Me', '/applications/about-me.html')"
+        @click="openApplication('About Me', 'applications/about-me.html')"
       >
         <img :src="BookIcon" alt="" class="start-menu__icon" />
         <span>About Me</span>
