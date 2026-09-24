@@ -39,14 +39,6 @@ const openDosApplication = (title, filename) => {
           <button
             class="start-menu__flyout-item"
             type="button"
-            @click="openDosApplication('Hackman', 'HACKMAN.jsdos')"
-          >
-            <img :src="PokerIcon" alt="" />
-            <span>Video Poker</span>
-          </button>
-          <button
-            class="start-menu__flyout-item"
-            type="button"
             @click="
               openApplication('Checkbox Snake', 'applications/snake.html')
             "
@@ -61,6 +53,14 @@ const openDosApplication = (title, filename) => {
           >
             <img :src="HackmanIcon" alt="" />
             <span>Hackman</span>
+          </button>
+          <button
+            class="start-menu__flyout-item"
+            type="button"
+            @click="openDosApplication('Video Poker', 'VPOKER.jsdos')"
+          >
+            <img :src="PokerIcon" alt="" />
+            <span>Video Poker</span>
           </button>
         </div>
       </div>
