@@ -49,10 +49,10 @@ const openDosApplication = (title, filename) => {
           <button
             class="start-menu__flyout-item"
             type="button"
-            @click="openDosApplication('Hackman', 'HACKMAN.jsdos')"
+            @click="openDosApplication('HackMan', 'HACKMAN.jsdos')"
           >
             <img :src="HackmanIcon" alt="" />
-            <span>Hackman</span>
+            <span>HackMan</span>
           </button>
           <button
             class="start-menu__flyout-item"
