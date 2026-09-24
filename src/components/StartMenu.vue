@@ -4,6 +4,7 @@ import ProgramsIcon from '../assets/images/programs.png'
 import ShutdownIcon from '../assets/images/shutdown.png'
 import SnakeIcon from '../assets/images/snake.png'
 import PokerIcon from '../assets/images/poker.png'
+import HackmanIcon from '../assets/images/hackman.png'
 import { useApplicationStore } from '@/stores/applications'
 
 const props = defineProps({
@@ -38,6 +39,14 @@ const openDosApplication = (title, filename) => {
           <button
             class="start-menu__flyout-item"
             type="button"
+            @click="openDosApplication('Hackman', 'HACKMAN.jsdos')"
+          >
+            <img :src="PokerIcon" alt="" />
+            <span>Video Poker</span>
+          </button>
+          <button
+            class="start-menu__flyout-item"
+            type="button"
             @click="
               openApplication('Checkbox Snake', 'applications/snake.html')
             "
@@ -48,10 +57,10 @@ const openDosApplication = (title, filename) => {
           <button
             class="start-menu__flyout-item"
             type="button"
-            @click="openDosApplication('Video Poker', 'VPOKER.jsdos')"
+            @click="openDosApplication('Hackman', 'HACKMAN.jsdos')"
           >
-            <img :src="PokerIcon" alt="" />
-            <span>Video Poker</span>
+            <img :src="HackmanIcon" alt="" />
+            <span>Hackman</span>
           </button>
         </div>
       </div>
