@@ -319,9 +319,14 @@ onUnmounted(() => {
   background-color: $color-gray;
 
   &--dos {
-    width: 59rem;
-    height: 40rem;
+    width: 88.5rem;
+    height: 58.5rem;
     resize: none;
+
+    @media (max-height: 38rem) {
+      width: 59rem;
+      height: 40rem;
+    }
   }
 
   &.maximized {
