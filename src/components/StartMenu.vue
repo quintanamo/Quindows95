@@ -49,10 +49,18 @@ const openDosApplication = (title, filename) => {
           <button
             class="start-menu__flyout-item"
             type="button"
-            @click="openDosApplication('HackMan', 'HACKMAN.jsdos')"
+            @click="openDosApplication('HackMan Classic', 'HACKMAN.jsdos')"
           >
             <img :src="HackmanIcon" alt="" />
-            <span>HackMan</span>
+            <span>HackMan Classic</span>
+          </button>
+          <button
+            class="start-menu__flyout-item"
+            type="button"
+            @click="openDosApplication('HackMan Remastered', 'HACKMAN2.jsdos')"
+          >
+            <img :src="HackmanIcon" alt="" />
+            <span>HackMan Remastered</span>
           </button>
           <button
             class="start-menu__flyout-item"
