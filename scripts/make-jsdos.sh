@@ -6,7 +6,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 SOURCE_DIR="${1:-$REPO_ROOT/dos-programs/hackman}"
 OUTPUT_DIR="${2:-$REPO_ROOT/public/applications}"
-OUTPUT_FILE="$OUTPUT_DIR/HACKMAN.jsdos"
+PROGRAM_NAME="$(basename "$SOURCE_DIR" | tr '[:lower:]' '[:upper:]')"
+OUTPUT_FILE="$OUTPUT_DIR/$PROGRAM_NAME.jsdos"
 
 if [[ ! -d "$SOURCE_DIR" ]]; then
 echo "ERROR: Source directory does not exist:"
@@ -24,37 +25,32 @@ echo "ERROR: unzip is not installed."
 exit 1
 fi
 
-REQUIRED_FILES=(
-"HACKMAN.EXE"
-"EASY.HCK"
-"MEDIUM.HCK"
-"HARD.HCK"
-"EXPERT.HCK"
-"INSANE.HCK"
-)
+EXECUTABLES=()
+while IFS= read -r -d '' FILE; do
+EXECUTABLES+=("$FILE")
+done < <(find "$SOURCE_DIR" -type f -iname '*.exe' -print0)
 
-for FILE in "${REQUIRED_FILES[@]}"; do
-if [[ ! -f "$SOURCE_DIR/$FILE" ]]; then
-echo "ERROR: Missing required file:"
-echo "$SOURCE_DIR/$FILE"
+if [[ "${#EXECUTABLES[@]}" -ne 1 ]]; then
+echo "ERROR: Expected exactly one .EXE file in the source directory tree; found ${#EXECUTABLES[@]}:"
+find "$SOURCE_DIR" -type f -iname '*.exe' -print
 exit 1
 fi
-done
+
+EXECUTABLE_RELATIVE_PATH="${EXECUTABLES[0]#"$SOURCE_DIR"/}"
+EXECUTABLE_DIRECTORY="$(dirname "$EXECUTABLE_RELATIVE_PATH")"
+EXECUTABLE_NAME="$(basename "$EXECUTABLE_RELATIVE_PATH")"
 
 mkdir -p "$OUTPUT_DIR"
 
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
-echo "Packing HACKMAN..."
+echo "Packing $PROGRAM_NAME..."
 echo "Source: $SOURCE_DIR"
 echo "Output: $OUTPUT_FILE"
 
+cp -R "$SOURCE_DIR/." "$STAGE/"
 mkdir -p "$STAGE/.jsdos"
-
-for FILE in "${REQUIRED_FILES[@]}"; do
-cp "$SOURCE_DIR/$FILE" "$STAGE/$FILE"
-done
 
 cat > "$STAGE/.jsdos/dosbox.conf" <<'EOF'
 [sdl]
@@ -90,8 +86,13 @@ pcspeaker=true
 @echo off
 mount c .
 c:
-HACKMAN.EXE
 EOF
+
+if [[ "$EXECUTABLE_DIRECTORY" != "." ]]; then
+printf 'cd "%s"\n' "$EXECUTABLE_DIRECTORY" >> "$STAGE/.jsdos/dosbox.conf"
+fi
+
+printf '%s\n' "$EXECUTABLE_NAME" >> "$STAGE/.jsdos/dosbox.conf"
 
 printf '%s\n' '{"version":"8.4.1"}' > "$STAGE/.jsdos/jsdos.json"
 
@@ -102,10 +103,7 @@ rm -f "$OUTPUT_FILE"
 
 (
 cd "$STAGE"
-zip -r -X "$OUTPUT_FILE" .
--x ".DS_Store"
--x "__MACOSX*"
--x "/._"
+zip -r -X "$OUTPUT_FILE" . -x ".DS_Store" "__MACOSX*" "/._"
 )
 
 if [[ ! -f "$OUTPUT_FILE" ]]; then
@@ -118,12 +116,10 @@ echo "Verifying bundle..."
 
 ZIP_LIST="$(unzip -l "$OUTPUT_FILE")"
 
-for FILE in "${REQUIRED_FILES[@]}"; do
-if ! printf '%s\n' "$ZIP_LIST" | grep -qE "[[:space:]]${FILE}$"; then
-echo "ERROR: $FILE is missing from the bundle."
+if ! printf '%s\n' "$ZIP_LIST" | grep -qF "$EXECUTABLE_RELATIVE_PATH"; then
+echo "ERROR: $EXECUTABLE_RELATIVE_PATH is missing from the bundle."
 exit 1
 fi
-done
 
 if ! printf '%s\n' "$ZIP_LIST" | grep -qF ".jsdos/dosbox.conf"; then
 echo "ERROR: .jsdos/dosbox.conf is missing."
